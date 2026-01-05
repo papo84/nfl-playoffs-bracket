@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFL Playoffs Bracket 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', 'Helvetica', sans-serif;
+            background: #1a1a1a;
+            background-image: url('https://a.espncdn.com/i/teamlogos/leagues/500/nfl.png');
+            background-size: 600px 600px;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(26, 26, 26, 0.9);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .title-container {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 4.5em;
+            font-weight: 900;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #d4af37 0%, #ffd700 50%, #ffed4e 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 
+                3px 3px 0px rgba(0,0,0,0.8),
+                6px 6px 0px rgba(0,0,0,0.6),
+                0 0 30px rgba(212, 175, 55, 0.8);
+            position: relative;
+            z-index: 1;
+            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5));
+        }
+
+        .main-bracket-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+            position: relative;
+            width: 100%;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        .conference-section {
+            flex: 0 1 auto;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .conference-title {
+            text-align: center;
+            font-size: 2.5em;
+            font-weight: 900;
+            letter-spacing: 6px;
+            margin-bottom: 30px;
+            color: #fff;
+            text-shadow: 
+                2px 2px 0px rgba(0,0,0,0.5),
+                0 0 15px rgba(255,255,255,0.3);
+            text-transform: uppercase;
+        }
+
+        .bracket {
+            display: flex;
+            gap: 20px;
+            position: relative;
+            width: 100%;
+        }
+
+        #nfc-bracket {
+            flex-direction: row;
+        }
+
+        #afc-bracket {
+            flex-direction: row-reverse;
+        }
+
+        .round {
+            flex: 0 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            min-width: 140px;
+            max-width: 160px;
+            position: relative;
+        }
+
+        .round-title {
+            text-align: center;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 8px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .game {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            position: relative;
+            padding: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.3);
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+
+        .team {
+            background: #000;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border: 2px solid #fff;
+            padding: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 55px;
+            height: 55px;
+            position: relative;
+            user-select: none;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .team::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1;
+        }
+
+        .team:hover {
+            border-color: #ffd700;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+            transform: translateX(3px);
+        }
+
+        .team:hover::before {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .team.selected {
+            border-color: #4CAF50;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.6);
+        }
+
+        .team.selected::before {
+            background: rgba(26, 77, 26, 0.6);
+        }
+
+        .team input[type="radio"] {
+            display: none;
+        }
+
+        .seed-box {
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9em;
+            border: 1px solid #fff;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .team.waiting {
+            background: #0a0a0a;
+            border-color: #333;
+            cursor: default;
+            opacity: 0.6;
+        }
+
+        .team.waiting:hover {
+            transform: none;
+            border-color: #333;
+            box-shadow: none;
+        }
+
+        .super-bowl-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            padding: 0 20px;
+            min-width: 300px;
+            max-width: 350px;
+            flex-shrink: 0;
+        }
+
+        .super-bowl-title {
+            font-size: 2.8em;
+            font-weight: 900;
+            letter-spacing: 6px;
+            color: #fff;
+            text-shadow: 
+                2px 2px 0px rgba(0,0,0,0.5),
+                0 0 20px rgba(255, 215, 0, 0.5);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .super-bowl-game {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .super-bowl-winner-container {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .super-bowl-winner-label {
+            color: #fff;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .super-bowl-winner {
+            background: #000;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border: 3px solid #ffd700;
+            padding: 20px;
+            min-height: 240px;
+            height: 240px;
+            position: relative;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .super-bowl-winner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+
+        .super-bowl-winner-container.hidden {
+            display: none;
+        }
+
+        .main-bracket-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 0;
+            position: relative;
+        }
+
+        .bracket-container-with-sb {
+            position: relative;
+            width: 100%;
+            overflow-x: auto;
+            padding: 20px 0;
+        }
+
+        .save-button {
+            display: block;
+            margin: 40px auto;
+            padding: 18px 50px;
+            font-size: 1.2em;
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            color: #000;
+            border: 2px solid #ffd700;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+        }
+
+        .save-button:hover {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
+        }
+
+        .save-button:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 1400px) {
+            .bracket-wrapper {
+                flex-direction: column;
+            }
+            
+            .bracket {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title-container">
+            <h1>PLAYOFF BRACKET</h1>
+        </div>
+        
+        <div class="bracket-container-with-sb">
+        <div class="bracket-container-with-sb">
+            <div class="main-bracket-container">
+                <div class="conference-section" id="nfc-section">
+                    <div class="conference-title">NFC</div>
+                    <div class="bracket" id="nfc-bracket"></div>
+                </div>
+                
+                <div class="super-bowl-section">
+                    <div class="super-bowl-title">SUPER BOWL</div>
+                    <div class="super-bowl-game" id="super-bowl-game"></div>
+                    <div class="super-bowl-winner-container hidden" id="super-bowl-winner-container">
+                        <div class="super-bowl-winner-label">CHAMPION</div>
+                        <div class="super-bowl-winner" id="super-bowl-winner"></div>
+                    </div>
+                </div>
+                
+                <div class="conference-section" id="afc-section">
+                    <div class="conference-title">AFC</div>
+                    <div class="bracket" id="afc-bracket"></div>
+                </div>
+            </div>
+        </div>
+
+        <button class="save-button" onclick="saveBracket()">Save Bracket to JSON</button>
+    </div>
+
+    <script>
+        const teams = {
+            afc: [
+                { seed: 1, name: "Denver Broncos", logo: "https://a.espncdn.com/i/teamlogos/nfl/500/den.png" },
+                { seed: 2, name: "New England Patriots", logo: "https://a.espncdn.com/i/teamlogos/nfl/500/ne.png" },
+                { seed: 3, name: "Jacksonville Jaguars", logo: "https://a.espncdn.com/i/teamlogos/nfl/500/jax.png" },
+                { seed: 4, name: "Pittsburgh Steelers", logo: "https://a.espncdn.com/i/teamlogos/nfl/500/pit.png" },
+                { seed: 5, name: "Houston Texans", logo: "https://a.espncdn.com/i/teamlogos/nfl/500/hou.png" },
+                { seed: 6, name: "Buffalo Bills", logo: "https://a.espncdn.com/i/teamlogos/nfl/500/buf.png" },
+                { seed: 7, name: "Los Angeles Chargers", logo: "https://a.espncdn.com/i/teamlogos/nfl/500/lac.png" }
+            ],
+            nfc: [
+                { seed: 1, name: "Seattle Seahawks", logo: "https://a.espncdn.com/i/teamlogos/nfl/500/sea.png" },
+                { seed: 2, name: "Chicago Bears", logo: "https://a.espncdn.com/i/teamlogos/nfl/500/chi.png" },
+                { seed: 3, name: "Philadelphia Eagles", logo: "https://a.espncdn.com/i/teamlogos/nfl/500/phi.png" },
+                { seed: 4, name: "Carolina Panthers", logo: "https://a.espncdn.com/i/teamlogos/nfl/500/car.png" },
+                { seed: 5, name: "Los Angeles Rams", logo: "https://a.espncdn.com/i/teamlogos/nfl/500/lar.png" },
+                { seed: 6, name: "San Francisco 49ers", logo: "https://a.espncdn.com/i/teamlogos/nfl/500/sf.png" },
+                { seed: 7, name: "Green Bay Packers", logo: "https://a.espncdn.com/i/teamlogos/nfl/500/gb.png" }
+            ]
+        };
+
+        let bracketData = {
+            afc: {
+                wildCard: { game1: null, game2: null, game3: null },
+                divisional: { game1: null, game2: null },
+                championship: null
+            },
+            nfc: {
+                wildCard: { game1: null, game2: null, game3: null },
+                divisional: { game1: null, game2: null },
+                championship: null
+            },
+            superBowl: null
+        };
+
+        function createTeamElement(team, gameId, round, conference) {
+            const teamDiv = document.createElement('div');
+            teamDiv.className = 'team';
+            teamDiv.dataset.seed = team.seed;
+            teamDiv.dataset.name = team.name;
+            teamDiv.dataset.gameId = gameId;
+            teamDiv.dataset.round = round;
+            teamDiv.dataset.conference = conference;
+            
+            // Make entire div clickable
+            teamDiv.onclick = () => handleSelection(conference, round, gameId, team);
+            
+            // Hidden radio for form compatibility
+            const radio = document.createElement('input');
+            radio.type = 'radio';
+            radio.name = gameId;
+            radio.value = team.name;
+            radio.id = `${gameId}-${team.seed}`;
+            radio.style.display = 'none';
+            
+            // Set logo as background image
+            teamDiv.style.backgroundImage = `url(${team.logo})`;
+            teamDiv.style.backgroundSize = 'cover';
+            teamDiv.style.backgroundPosition = 'center';
+            
+            // Seed box
+            const seedBox = document.createElement('div');
+            seedBox.className = 'seed-box';
+            seedBox.textContent = team.seed;
+            
+            teamDiv.appendChild(radio);
+            teamDiv.appendChild(seedBox);
+            
+            return teamDiv;
+        }
+
+        function createGameElement(gameId, round, conference, team1, team2) {
+            const gameDiv = document.createElement('div');
+            gameDiv.className = 'game';
+            gameDiv.id = gameId;
+            
+            gameDiv.appendChild(createTeamElement(team1, gameId, round, conference));
+            gameDiv.appendChild(createTeamElement(team2, gameId, round, conference));
+            
+            return gameDiv;
+        }
+
+        function buildBracket(conference) {
+            const bracketDiv = document.getElementById(`${conference}-bracket`);
+            bracketDiv.innerHTML = '';
+            
+            // Championship Round (closest to center)
+            const championshipRound = document.createElement('div');
+            championshipRound.className = 'round';
+            const championshipTitle = document.createElement('div');
+            championshipTitle.className = 'round-title';
+            championshipTitle.textContent = 'Championship';
+            championshipRound.appendChild(championshipTitle);
+            
+            const champ = document.createElement('div');
+            champ.className = 'game';
+            champ.id = `${conference}-champ`;
+            const waitingChamp1 = document.createElement('div');
+            waitingChamp1.className = 'team waiting';
+            waitingChamp1.innerHTML = '<div class="seed-box">-</div>';
+            champ.appendChild(waitingChamp1);
+            const waitingChamp2 = document.createElement('div');
+            waitingChamp2.className = 'team waiting';
+            waitingChamp2.innerHTML = '<div class="seed-box">-</div>';
+            champ.appendChild(waitingChamp2);
+            
+            championshipRound.appendChild(champ);
+            
+            // Divisional Round
+            const divisionalRound = document.createElement('div');
+            divisionalRound.className = 'round';
+            const divisionalTitle = document.createElement('div');
+            divisionalTitle.className = 'round-title';
+            divisionalTitle.textContent = 'Divisional';
+            divisionalRound.appendChild(divisionalTitle);
+            
+            const div1 = document.createElement('div');
+            div1.className = 'game';
+            div1.id = `${conference}-div-1`;
+            // Pre-populate with #1 seed
+            div1.appendChild(createTeamElement(teams[conference][0], `${conference}-div-1`, 'divisional', conference));
+            const waitingDiv1 = document.createElement('div');
+            waitingDiv1.className = 'team waiting';
+            waitingDiv1.innerHTML = '<div class="seed-box">-</div>';
+            div1.appendChild(waitingDiv1);
+            
+            const div2 = document.createElement('div');
+            div2.className = 'game';
+            div2.id = `${conference}-div-2`;
+            const waitingDiv2a = document.createElement('div');
+            waitingDiv2a.className = 'team waiting';
+            waitingDiv2a.innerHTML = '<div class="seed-box">-</div>';
+            div2.appendChild(waitingDiv2a);
+            const waitingDiv2b = document.createElement('div');
+            waitingDiv2b.className = 'team waiting';
+            waitingDiv2b.innerHTML = '<div class="seed-box">-</div>';
+            div2.appendChild(waitingDiv2b);
+            
+            divisionalRound.appendChild(div1);
+            divisionalRound.appendChild(div2);
+            
+            // Wild Card Round (furthest from center)
+            const wildCardRound = document.createElement('div');
+            wildCardRound.className = 'round';
+            const wildCardTitle = document.createElement('div');
+            wildCardTitle.className = 'round-title';
+            wildCardTitle.textContent = 'Wild Card';
+            wildCardRound.appendChild(wildCardTitle);
+            
+            // Wild Card games: 2v7, 3v6, 4v5
+            const wc1 = createGameElement(`${conference}-wc-1`, 'wildCard', conference, 
+                teams[conference][1], teams[conference][6]);
+            const wc2 = createGameElement(`${conference}-wc-2`, 'wildCard', conference, 
+                teams[conference][2], teams[conference][5]);
+            const wc3 = createGameElement(`${conference}-wc-3`, 'wildCard', conference, 
+                teams[conference][3], teams[conference][4]);
+            
+            wildCardRound.appendChild(wc1);
+            wildCardRound.appendChild(wc2);
+            wildCardRound.appendChild(wc3);
+            
+            // Append order depends on conference
+            if (conference === 'nfc') {
+                // NFC: Wild Card (left edge) → Divisional → Championship (right, near center)
+                bracketDiv.appendChild(wildCardRound);
+                bracketDiv.appendChild(divisionalRound);
+                bracketDiv.appendChild(championshipRound);
+            } else {
+                // AFC with row-reverse: Append Wild Card first so it appears on RIGHT edge
+                // Wild Card (right edge) → Divisional → Championship (left, near center)
+                bracketDiv.appendChild(wildCardRound);
+                bracketDiv.appendChild(divisionalRound);
+                bracketDiv.appendChild(championshipRound);
+            }
+        }
+
+        function handleSelection(conference, round, gameId, team) {
+            // Update bracket data
+            if (round === 'wildCard') {
+                const gameNum = gameId.split('-').pop();
+                bracketData[conference].wildCard[`game${gameNum}`] = team.name;
+            } else if (round === 'divisional') {
+                const gameNum = gameId.split('-').pop();
+                bracketData[conference].divisional[`game${gameNum}`] = team.name;
+            } else if (round === 'championship') {
+                bracketData[conference].championship = team.name;
+            } else if (round === 'superBowl') {
+                bracketData.superBowl = team.name;
+            }
+            
+            // Update visual selection
+            let gameElement = document.getElementById(gameId);
+            // Special handling for Super Bowl
+            if (round === 'superBowl') {
+                gameElement = document.getElementById('super-bowl-game');
+            }
+            if (gameElement) {
+                // Remove selected class from all teams in this game
+                gameElement.querySelectorAll('.team').forEach(t => {
+                    t.classList.remove('selected');
+                    const radio = t.querySelector('input[type="radio"]');
+                    if (radio) radio.checked = false;
+                });
+                // Add selected class to chosen team
+                const selectedTeam = gameElement.querySelector(`[data-name="${team.name}"]`);
+                if (selectedTeam) {
+                    selectedTeam.classList.add('selected');
+                    const radio = selectedTeam.querySelector('input[type="radio"]');
+                    if (radio) radio.checked = true;
+                }
+            }
+            
+            // Update UI
+            updateBracket(conference);
+            
+            // Update Super Bowl when championship is selected or after divisional (in case both champs are now set)
+            if (round === 'championship' || round === 'divisional') {
+                updateSuperBowl();
+            }
+            
+            // Update Super Bowl winner when Super Bowl is selected
+            if (round === 'superBowl') {
+                updateSuperBowlWinner();
+            }
+        }
+
+        function updateBracket(conference) {
+            const data = bracketData[conference];
+            
+            // Update Divisional Round
+            const div1 = document.getElementById(`${conference}-div-1`);
+            const div2 = document.getElementById(`${conference}-div-2`);
+            
+            // Get all WC winners
+            const wcWinners = [];
+            if (data.wildCard.game1) wcWinners.push({ name: data.wildCard.game1, seed: getSeedByName(conference, data.wildCard.game1) });
+            if (data.wildCard.game2) wcWinners.push({ name: data.wildCard.game2, seed: getSeedByName(conference, data.wildCard.game2) });
+            if (data.wildCard.game3) wcWinners.push({ name: data.wildCard.game3, seed: getSeedByName(conference, data.wildCard.game3) });
+            
+            // Divisional Game 1: #1 seed vs lowest remaining WC winner (lowest seed = highest seed number)
+            if (wcWinners.length > 0) {
+                // Sort by seed descending to get the lowest seed (highest number)
+                wcWinners.sort((a, b) => b.seed - a.seed);
+                const lowestWC = wcWinners[0]; // This is the highest seed number (worst seed)
+                const lowestTeam = teams[conference].find(t => t.name === lowestWC.name);
+                
+                div1.innerHTML = '';
+                div1.appendChild(createTeamElement(teams[conference][0], `${conference}-div-1`, 'divisional', conference));
+                div1.appendChild(createTeamElement(lowestTeam, `${conference}-div-1`, 'divisional', conference));
+                
+                // Check if a team is selected
+                if (data.divisional.game1) {
+                    const selectedTeam = div1.querySelector(`[data-name="${data.divisional.game1}"]`);
+                    if (selectedTeam) {
+                        selectedTeam.classList.add('selected');
+                        const radio = selectedTeam.querySelector('input[type="radio"]');
+                        if (radio) radio.checked = true;
+                    }
+                }
+            } else {
+                // Keep #1 seed pre-populated
+                div1.innerHTML = '';
+                div1.appendChild(createTeamElement(teams[conference][0], `${conference}-div-1`, 'divisional', conference));
+                const waitingDiv = document.createElement('div');
+                waitingDiv.className = 'team waiting';
+                waitingDiv.innerHTML = '<div class="seed-box">-</div><span class="team-name">WC Winner</span>';
+                div1.appendChild(waitingDiv);
+            }
+            
+            // Divisional Game 2: Two highest remaining WC winners (excluding the lowest/highest seed number)
+            if (wcWinners.length >= 3) {
+                // All 3 WC games complete - lowest seed (highest number) goes to game 1, two highest seeds (lowest numbers) go to game 2
+                const sortedBySeedDesc = [...wcWinners].sort((a, b) => b.seed - a.seed); // Sort descending
+                const lowestSeed = sortedBySeedDesc[0]; // Highest seed number (worst seed)
+                const remainingWinners = sortedBySeedDesc.slice(1); // The two better seeds
+                // Sort remaining by seed ascending (best first)
+                remainingWinners.sort((a, b) => a.seed - b.seed);
+                
+                div2.innerHTML = '';
+                const team1 = teams[conference].find(t => t.name === remainingWinners[0].name);
+                const team2 = teams[conference].find(t => t.name === remainingWinners[1].name);
+                div2.appendChild(createTeamElement(team1, `${conference}-div-2`, 'divisional', conference));
+                div2.appendChild(createTeamElement(team2, `${conference}-div-2`, 'divisional', conference));
+                
+                // Check if a team is selected
+                if (data.divisional.game2) {
+                    const selectedTeam = div2.querySelector(`[data-name="${data.divisional.game2}"]`);
+                    if (selectedTeam) {
+                        selectedTeam.classList.add('selected');
+                        const radio = selectedTeam.querySelector('input[type="radio"]');
+                        if (radio) radio.checked = true;
+                    }
+                }
+            } else if (wcWinners.length === 2) {
+                // Two WC games complete - determine which goes to game 1 and which to game 2
+                const sortedBySeedDesc = [...wcWinners].sort((a, b) => b.seed - a.seed);
+                const lowestSeed = sortedBySeedDesc[0]; // This will go to game 1
+                const higherSeed = sortedBySeedDesc[1]; // This goes to game 2, waiting for third
+                
+                div2.innerHTML = '';
+                const higherTeam = teams[conference].find(t => t.name === higherSeed.name);
+                div2.appendChild(createTeamElement(higherTeam, `${conference}-div-2`, 'divisional', conference));
+                const waitingDiv = document.createElement('div');
+                waitingDiv.className = 'team waiting';
+                waitingDiv.innerHTML = '<div class="seed-box">-</div>';
+                div2.appendChild(waitingDiv);
+                
+                // Check if a team is selected
+                if (data.divisional.game2) {
+                    const selectedTeam = div2.querySelector(`[data-name="${data.divisional.game2}"]`);
+                    if (selectedTeam) {
+                        selectedTeam.classList.add('selected');
+                        const radio = selectedTeam.querySelector('input[type="radio"]');
+                        if (radio) radio.checked = true;
+                    }
+                }
+            } else if (wcWinners.length === 1) {
+                // Only one WC game complete
+                div2.innerHTML = '';
+                const waitingDiv1 = document.createElement('div');
+                waitingDiv1.className = 'team waiting';
+                waitingDiv1.innerHTML = '<div class="seed-box">-</div>';
+                div2.appendChild(waitingDiv1);
+                const waitingDiv2 = document.createElement('div');
+                waitingDiv2.className = 'team waiting';
+                waitingDiv2.innerHTML = '<div class="seed-box">-</div>';
+                div2.appendChild(waitingDiv2);
+            } else {
+                div2.innerHTML = '';
+                const waitingDiv1 = document.createElement('div');
+                waitingDiv1.className = 'team waiting';
+                waitingDiv1.innerHTML = '<div class="seed-box">-</div>';
+                div2.appendChild(waitingDiv1);
+                const waitingDiv2 = document.createElement('div');
+                waitingDiv2.className = 'team waiting';
+                waitingDiv2.innerHTML = '<div class="seed-box">-</div><span class="team-name">WC Winner</span>';
+                div2.appendChild(waitingDiv2);
+            }
+            
+            // Update Championship Round - Top seed (lowest number) gets lowest seed (highest number) available
+            const champ = document.getElementById(`${conference}-champ`);
+            const divWinners = [];
+            if (data.divisional.game1) divWinners.push({ name: data.divisional.game1, seed: getSeedByName(conference, data.divisional.game1) });
+            if (data.divisional.game2) divWinners.push({ name: data.divisional.game2, seed: getSeedByName(conference, data.divisional.game2) });
+            
+            if (divWinners.length === 2) {
+                // Sort by seed ascending - top seed (lowest number) plays lowest seed (highest number)
+                divWinners.sort((a, b) => a.seed - b.seed);
+                champ.innerHTML = '';
+                
+                const team1 = teams[conference].find(t => t.name === divWinners[0].name);
+                const team2 = teams[conference].find(t => t.name === divWinners[1].name);
+                champ.appendChild(createTeamElement(team1, `${conference}-champ`, 'championship', conference));
+                champ.appendChild(createTeamElement(team2, `${conference}-champ`, 'championship', conference));
+                
+                // Check if a team is selected
+                if (data.championship) {
+                    const selectedTeam = champ.querySelector(`[data-name="${data.championship}"]`);
+                    if (selectedTeam) {
+                        selectedTeam.classList.add('selected');
+                        const radio = selectedTeam.querySelector('input[type="radio"]');
+                        if (radio) radio.checked = true;
+                    }
+                }
+            } else if (divWinners.length === 1) {
+                champ.innerHTML = '';
+                const team1 = teams[conference].find(t => t.name === divWinners[0].name);
+                champ.appendChild(createTeamElement(team1, `${conference}-champ`, 'championship', conference));
+                const waitingDiv = document.createElement('div');
+                waitingDiv.className = 'team waiting';
+                waitingDiv.innerHTML = '<div class="seed-box">-</div>';
+                champ.appendChild(waitingDiv);
+            } else {
+                champ.innerHTML = '';
+                const waitingDiv1 = document.createElement('div');
+                waitingDiv1.className = 'team waiting';
+                waitingDiv1.innerHTML = '<div class="seed-box">-</div>';
+                champ.appendChild(waitingDiv1);
+                const waitingDiv2 = document.createElement('div');
+                waitingDiv2.className = 'team waiting';
+                waitingDiv2.innerHTML = '<div class="seed-box">-</div>';
+                champ.appendChild(waitingDiv2);
+            }
+        }
+
+        function updateSuperBowl() {
+            const superBowlDiv = document.getElementById('super-bowl-game');
+            const afcChamp = bracketData.afc.championship;
+            const nfcChamp = bracketData.nfc.championship;
+            
+            superBowlDiv.innerHTML = '';
+            
+            // Show teams as soon as they're selected, even if only one conference has a champion
+            if (afcChamp && nfcChamp) {
+                // Both champions selected
+                const afcTeam = teams.afc.find(t => t.name === afcChamp);
+                const nfcTeam = teams.nfc.find(t => t.name === nfcChamp);
+                
+                if (afcTeam && nfcTeam) {
+                    // Sort by seed - top seed (lower number) gets displayed first
+                    const teamsArray = [afcTeam, nfcTeam].sort((a, b) => a.seed - b.seed);
+                    // Determine conference for each team
+                    const team1Conference = teamsArray[0].name === afcChamp ? 'afc' : 'nfc';
+                    const team2Conference = teamsArray[1].name === afcChamp ? 'afc' : 'nfc';
+                    
+                    superBowlDiv.appendChild(createTeamElement(teamsArray[0], 'super-bowl', 'superBowl', team1Conference));
+                    superBowlDiv.appendChild(createTeamElement(teamsArray[1], 'super-bowl', 'superBowl', team2Conference));
+                }
+            } else if (afcChamp) {
+                // Only AFC champion selected
+                const afcTeam = teams.afc.find(t => t.name === afcChamp);
+                if (afcTeam) {
+                    superBowlDiv.appendChild(createTeamElement(afcTeam, 'super-bowl', 'superBowl', 'afc'));
+                    const waitingDiv = document.createElement('div');
+                    waitingDiv.className = 'team waiting';
+                    waitingDiv.innerHTML = '<div class="seed-box">-</div>';
+                    superBowlDiv.appendChild(waitingDiv);
+                }
+            } else if (nfcChamp) {
+                // Only NFC champion selected
+                const nfcTeam = teams.nfc.find(t => t.name === nfcChamp);
+                if (nfcTeam) {
+                    superBowlDiv.appendChild(createTeamElement(nfcTeam, 'super-bowl', 'superBowl', 'nfc'));
+                    const waitingDiv = document.createElement('div');
+                    waitingDiv.className = 'team waiting';
+                    waitingDiv.innerHTML = '<div class="seed-box">-</div>';
+                    superBowlDiv.appendChild(waitingDiv);
+                }
+            } else {
+                // No champions selected yet
+                const waitingDiv1 = document.createElement('div');
+                waitingDiv1.className = 'team waiting';
+                waitingDiv1.innerHTML = '<div class="seed-box">-</div>';
+                superBowlDiv.appendChild(waitingDiv1);
+                const waitingDiv2 = document.createElement('div');
+                waitingDiv2.className = 'team waiting';
+                waitingDiv2.innerHTML = '<div class="seed-box">-</div>';
+                superBowlDiv.appendChild(waitingDiv2);
+            }
+            
+            // Check if a team is selected (restore selection if present)
+            if (bracketData.superBowl) {
+                const selectedTeam = superBowlDiv.querySelector(`[data-name="${bracketData.superBowl}"]`);
+                if (selectedTeam) {
+                    selectedTeam.classList.add('selected');
+                    const radio = selectedTeam.querySelector('input[type="radio"]');
+                    if (radio) radio.checked = true;
+                }
+            }
+            
+            // Update winner rectangle
+            updateSuperBowlWinner();
+        }
+
+        function updateSuperBowlWinner() {
+            const winnerContainer = document.getElementById('super-bowl-winner-container');
+            const winnerDiv = document.getElementById('super-bowl-winner');
+            const winner = bracketData.superBowl;
+            
+            if (winner) {
+                // Find the team in either conference
+                let winnerTeam = teams.afc.find(t => t.name === winner);
+                if (!winnerTeam) {
+                    winnerTeam = teams.nfc.find(t => t.name === winner);
+                }
+                
+                if (winnerTeam) {
+                    winnerDiv.style.backgroundImage = `url(${winnerTeam.logo})`;
+                    winnerDiv.style.backgroundSize = 'cover';
+                    winnerDiv.style.backgroundPosition = 'center';
+                    winnerContainer.classList.remove('hidden');
+                } else {
+                    winnerContainer.classList.add('hidden');
+                }
+            } else {
+                winnerContainer.classList.add('hidden');
+            }
+        }
+
+        function getSeedByName(conference, name) {
+            const team = teams[conference].find(t => t.name === name);
+            return team ? team.seed : null;
+        }
+
+        function saveBracket() {
+            const dataStr = JSON.stringify(bracketData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'nfl_playoffs_bracket.json';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize brackets
+        buildBracket('afc');
+        buildBracket('nfc');
+        updateSuperBowl();
+    </script>
+</body>
+</html>
