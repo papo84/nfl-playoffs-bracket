@@ -208,6 +208,25 @@
             display: none;
         }
 
+        .team.locked {
+            cursor: default;
+        }
+
+        .team.locked:hover {
+            transform: none;
+            box-shadow: none;
+            border-color: #fff;
+        }
+
+        .team.locked-loser {
+            opacity: 0.35;
+        }
+
+        .team.locked-winner {
+            border-color: #4CAF50;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.6);
+        }
+
         .seed-box {
             background: rgba(0, 0, 0, 0.8);
             color: #fff;
@@ -523,7 +542,7 @@
 <body>
     <div class="container">
         <div class="title-container">
-            <h1>PLAYOFF BRACKET</h1>
+            <h1>2026 NFL PLAYOFF BRACKET</h1>
         </div>
         
         <div class="bracket-container-with-sb">
@@ -589,6 +608,19 @@
             superBowl: null
         };
 
+        // Fixed Wild Card results (cannot be changed)
+        // Game mapping: wc-1 = 2v7, wc-2 = 3v6, wc-3 = 4v5
+        const fixedPicks = {
+            "nfc-wc-1": "Chicago Bears",
+            "nfc-wc-3": "Los Angeles Rams",
+            "afc-wc-2": "Buffalo Bills",
+        };
+
+        // Pre-fill fixed picks into state so later rounds auto-populate
+        bracketData.nfc.wildCard.game1 = fixedPicks["nfc-wc-1"];
+        bracketData.nfc.wildCard.game3 = fixedPicks["nfc-wc-3"];
+        bracketData.afc.wildCard.game2 = fixedPicks["afc-wc-2"];
+
         function createTeamElement(team, gameId, round, conference) {
             const teamDiv = document.createElement('div');
             teamDiv.className = 'team';
@@ -598,8 +630,20 @@
             teamDiv.dataset.round = round;
             teamDiv.dataset.conference = conference;
             
-            // Make entire div clickable
-            teamDiv.onclick = () => handleSelection(conference, round, gameId, team);
+            const fixedWinner = fixedPicks[gameId];
+            const isFixedGame = Boolean(fixedWinner);
+
+            // Make entire div clickable (unless this matchup is fixed)
+            if (!isFixedGame) {
+                teamDiv.onclick = () => handleSelection(conference, round, gameId, team);
+            } else {
+                teamDiv.classList.add('locked');
+                if (team.name === fixedWinner) {
+                    teamDiv.classList.add('locked-winner', 'selected');
+                } else {
+                    teamDiv.classList.add('locked-loser');
+                }
+            }
             
             // Hidden radio for form compatibility
             const radio = document.createElement('input');
@@ -608,6 +652,9 @@
             radio.value = team.name;
             radio.id = `${gameId}-${team.seed}`;
             radio.style.display = 'none';
+            if (isFixedGame && team.name === fixedWinner) {
+                radio.checked = true;
+            }
             
             // Set logo as background image
             teamDiv.style.backgroundImage = `url(${team.logo})`;
@@ -731,6 +778,9 @@
         }
 
         function handleSelection(conference, round, gameId, team) {
+            // Prevent changes to fixed WC games
+            if (fixedPicks[gameId]) return;
+
             // Update bracket data
             if (round === 'wildCard') {
                 const gameNum = gameId.split('-').pop();
@@ -777,6 +827,28 @@
             // Update Super Bowl winner when Super Bowl is selected
             if (round === 'superBowl') {
                 updateSuperBowlWinner();
+            }
+        }
+
+        function applyStoredWildCardSelections(conference) {
+            const data = bracketData[conference];
+            const mappings = [
+                { gameKey: "game1", elId: `${conference}-wc-1` },
+                { gameKey: "game2", elId: `${conference}-wc-2` },
+                { gameKey: "game3", elId: `${conference}-wc-3` },
+            ];
+
+            for (const m of mappings) {
+                const winnerName = data.wildCard[m.gameKey];
+                if (!winnerName) continue;
+                const gameEl = document.getElementById(m.elId);
+                if (!gameEl) continue;
+
+                const teamEl = gameEl.querySelector(`[data-name="${winnerName}"]`);
+                if (!teamEl) continue;
+                teamEl.classList.add("selected");
+                const radio = teamEl.querySelector('input[type="radio"]');
+                if (radio) radio.checked = true;
             }
         }
 
@@ -1054,6 +1126,10 @@
         // Initialize brackets
         buildBracket('afc');
         buildBracket('nfc');
+        applyStoredWildCardSelections('afc');
+        applyStoredWildCardSelections('nfc');
+        updateBracket('afc');
+        updateBracket('nfc');
         updateSuperBowl();
     </script>
 </body>
