@@ -612,14 +612,20 @@
         // Game mapping: wc-1 = 2v7, wc-2 = 3v6, wc-3 = 4v5
         const fixedPicks = {
             "nfc-wc-1": "Chicago Bears",
+            "nfc-wc-2": "San Francisco 49ers",
             "nfc-wc-3": "Los Angeles Rams",
+            "afc-wc-1": "New England Patriots",
             "afc-wc-2": "Buffalo Bills",
+            "afc-wc-3": "Houston Texans",
         };
 
         // Pre-fill fixed picks into state so later rounds auto-populate
         bracketData.nfc.wildCard.game1 = fixedPicks["nfc-wc-1"];
+        bracketData.nfc.wildCard.game2 = fixedPicks["nfc-wc-2"];
         bracketData.nfc.wildCard.game3 = fixedPicks["nfc-wc-3"];
+        bracketData.afc.wildCard.game1 = fixedPicks["afc-wc-1"];
         bracketData.afc.wildCard.game2 = fixedPicks["afc-wc-2"];
+        bracketData.afc.wildCard.game3 = fixedPicks["afc-wc-3"];
 
         function createTeamElement(team, gameId, round, conference) {
             const teamDiv = document.createElement('div');
