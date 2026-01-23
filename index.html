@@ -618,6 +618,11 @@
             "afc-wc-1": "New England Patriots",
             "afc-wc-2": "Buffalo Bills",
             "afc-wc-3": "Houston Texans",
+            // Fixed Divisional results (cannot be changed)
+            "nfc-div-1": "Seattle Seahawks",
+            "nfc-div-2": "Los Angeles Rams",
+            "afc-div-1": "Denver Broncos",
+            "afc-div-2": "New England Patriots",
         };
 
         // Pre-fill fixed picks into state so later rounds auto-populate
@@ -627,6 +632,12 @@
         bracketData.afc.wildCard.game1 = fixedPicks["afc-wc-1"];
         bracketData.afc.wildCard.game2 = fixedPicks["afc-wc-2"];
         bracketData.afc.wildCard.game3 = fixedPicks["afc-wc-3"];
+
+        // Pre-fill fixed divisional picks into state so championship auto-populates
+        bracketData.nfc.divisional.game1 = fixedPicks["nfc-div-1"];
+        bracketData.nfc.divisional.game2 = fixedPicks["nfc-div-2"];
+        bracketData.afc.divisional.game1 = fixedPicks["afc-div-1"];
+        bracketData.afc.divisional.game2 = fixedPicks["afc-div-2"];
 
         function createTeamElement(team, gameId, round, conference) {
             const teamDiv = document.createElement('div');
