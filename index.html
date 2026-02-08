@@ -623,6 +623,9 @@
             "nfc-div-2": "Los Angeles Rams",
             "afc-div-1": "Denver Broncos",
             "afc-div-2": "New England Patriots",
+            // Fixed Conference Championship results (cannot be changed)
+            "nfc-champ": "Seattle Seahawks",
+            "afc-champ": "New England Patriots",
         };
 
         // Pre-fill fixed picks into state so later rounds auto-populate
@@ -638,6 +641,10 @@
         bracketData.nfc.divisional.game2 = fixedPicks["nfc-div-2"];
         bracketData.afc.divisional.game1 = fixedPicks["afc-div-1"];
         bracketData.afc.divisional.game2 = fixedPicks["afc-div-2"];
+
+        // Pre-fill fixed conference championship picks into state so Super Bowl auto-populates
+        bracketData.nfc.championship = fixedPicks["nfc-champ"];
+        bracketData.afc.championship = fixedPicks["afc-champ"];
 
         function createTeamElement(team, gameId, round, conference) {
             const teamDiv = document.createElement('div');
