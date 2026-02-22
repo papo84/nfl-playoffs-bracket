@@ -12,9 +12,17 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --sea-navy: #002244;
+            --sea-green: #69BE28;
+            --sea-silver: #A5ACAF;
+            --sea-white: #FFFFFF;
+            --sea-bg: #0b0f14;
+        }
+
         body {
             font-family: 'Arial', 'Helvetica', sans-serif;
-            background: #1a1a1a;
+            background: var(--sea-bg);
             background-image: url('https://a.espncdn.com/i/teamlogos/leagues/500/nfl.png');
             background-size: 600px 600px;
             background-position: center;
@@ -33,7 +41,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(26, 26, 26, 0.9);
+            background: rgba(11, 15, 20, 0.92);
             z-index: 0;
             pointer-events: none;
         }
@@ -58,17 +66,17 @@
             font-weight: 900;
             letter-spacing: 8px;
             text-transform: uppercase;
-            background: linear-gradient(135deg, #d4af37 0%, #ffd700 50%, #ffed4e 100%);
+            background: linear-gradient(135deg, var(--sea-silver) 0%, var(--sea-white) 35%, var(--sea-green) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             text-shadow: 
                 3px 3px 0px rgba(0,0,0,0.8),
                 6px 6px 0px rgba(0,0,0,0.6),
-                0 0 30px rgba(212, 175, 55, 0.8);
+                0 0 30px rgba(105, 190, 40, 0.45);
             position: relative;
             z-index: 1;
-            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5));
+            filter: drop-shadow(0 0 10px rgba(165, 172, 175, 0.35));
         }
 
         .main-bracket-container {
@@ -171,7 +179,7 @@
             user-select: none;
             width: 100%;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: rgba(255, 215, 0, 0.3);
+            -webkit-tap-highlight-color: rgba(105, 190, 40, 0.25);
             touch-action: manipulation;
         }
 
@@ -187,8 +195,8 @@
         }
 
         .team:hover {
-            border-color: #ffd700;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+            border-color: var(--sea-green);
+            box-shadow: 0 0 15px rgba(105, 190, 40, 0.35);
             transform: translateX(3px);
         }
 
@@ -197,12 +205,12 @@
         }
 
         .team.selected {
-            border-color: #4CAF50;
-            box-shadow: 0 0 20px rgba(76, 175, 80, 0.6);
+            border-color: var(--sea-green);
+            box-shadow: 0 0 20px rgba(105, 190, 40, 0.55);
         }
 
         .team.selected::before {
-            background: rgba(26, 77, 26, 0.6);
+            background: rgba(105, 190, 40, 0.22);
         }
 
         .team input[type="radio"] {
@@ -224,8 +232,8 @@
         }
 
         .team.locked-winner {
-            border-color: #4CAF50;
-            box-shadow: 0 0 20px rgba(76, 175, 80, 0.6);
+            border-color: var(--sea-green);
+            box-shadow: 0 0 20px rgba(105, 190, 40, 0.55);
         }
 
         .seed-box {
@@ -275,7 +283,7 @@
             color: #fff;
             text-shadow: 
                 2px 2px 0px rgba(0,0,0,0.5),
-                0 0 20px rgba(255, 215, 0, 0.5);
+                0 0 20px rgba(105, 190, 40, 0.35);
             text-transform: uppercase;
             margin-bottom: 10px;
             text-align: center;
@@ -309,7 +317,7 @@
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            border: 3px solid #ffd700;
+            border: 3px solid var(--sea-green);
             padding: 20px;
             min-height: 240px;
             height: 240px;
@@ -354,22 +362,22 @@
             margin: 40px auto;
             padding: 18px 50px;
             font-size: 1.2em;
-            background: linear-gradient(135deg, #d4af37, #ffd700);
-            color: #000;
-            border: 2px solid #ffd700;
+            background: linear-gradient(135deg, var(--sea-navy), #0f3a63);
+            color: var(--sea-white);
+            border: 2px solid var(--sea-green);
             border-radius: 5px;
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 2px;
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+            box-shadow: 0 4px 15px rgba(105, 190, 40, 0.25);
         }
 
         .save-button:hover {
-            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            background: linear-gradient(135deg, #0f3a63, var(--sea-navy));
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
+            box-shadow: 0 6px 20px rgba(105, 190, 40, 0.35);
         }
 
         .save-button:active {
@@ -626,6 +634,8 @@
             // Fixed Conference Championship results (cannot be changed)
             "nfc-champ": "Seattle Seahawks",
             "afc-champ": "New England Patriots",
+            // Fixed Super Bowl result (cannot be changed)
+            "super-bowl": "Seattle Seahawks",
         };
 
         // Pre-fill fixed picks into state so later rounds auto-populate
@@ -645,6 +655,9 @@
         // Pre-fill fixed conference championship picks into state so Super Bowl auto-populates
         bracketData.nfc.championship = fixedPicks["nfc-champ"];
         bracketData.afc.championship = fixedPicks["afc-champ"];
+
+        // Pre-fill fixed Super Bowl winner
+        bracketData.superBowl = fixedPicks["super-bowl"];
 
         function createTeamElement(team, gameId, round, conference) {
             const teamDiv = document.createElement('div');
